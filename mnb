@@ -1,0 +1,16 @@
+from fastapi import FastAPI, Path
+from pydantic import BaseModel, Field
+
+app = FastAPI()
+
+class User(BaseModel):
+    username: str = Field(..., min_length=5, max_length=20, description="Enter username")
+    age: int = Field(..., ge=18, le=120, description="Enter age")
+
+@app.get('/user/{user_id}')
+async def user(user_id: int = Path(..., ge=1, le=100, description="Enter User ID")):
+    return {'message': f'Вы вошли как пользователь № {user_id}'}
+
+@app.get('/user/{username}/{age}')
+async def user_info(user: User):
+    return {'message': f'Информация о пользователе. Имя: {user.username}, Возраст: {user.age}'}
